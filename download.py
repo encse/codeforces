@@ -3,6 +3,7 @@ import json
 import os.path
 import codecs
 
+
 def download(submissionId) :
 	print "Downloading " + submissionId 
 	res = requests.post("http://codeforces.com/data/submitSource", data={'submissionId':submissionId});
