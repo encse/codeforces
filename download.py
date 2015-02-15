@@ -4,8 +4,9 @@ import os.path
 import codecs
 
 def download(submissionId) :
+	print "Downloading " + submissionId 
 	res = requests.post("http://codeforces.com/data/submitSource", data={'submissionId':submissionId});
-	
+	res.raise_for_status()
 	return json.loads(res.text)['source'].replace("\r","")
 
 def getSubmissions(user):
@@ -15,6 +16,7 @@ def getSubmissions(user):
 	while True:
 		query = {'count':c, 'from':i, 'handle':user}
 		res = requests.get("http://codeforces.com/api/user.status", params = query)
+		res.raise_for_status()
 		res = json.loads(res.text)['result']
 		s += res;
 		if len(res) < c:
@@ -22,7 +24,7 @@ def getSubmissions(user):
 		i += c	
 	
 	return [{
-		'id':x['id'], 
+		'id':str(x['id']), 
 		'problem':x['problem']['name'], 
 		'contestId':str(x['problem']['contestId']),
 		'problemId':str(x['problem']['index']) 
@@ -30,12 +32,13 @@ def getSubmissions(user):
 
 def main(user):
 	for submission in getSubmissions(user):
-		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+str(submission['id'])+'.cs'
-		if not os.path.isfile(filn):
-			fp=codecs.open(filn, 'w', 'utf-8-sig')
+		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+submission['id']+'.cs'
+		if not os.path.isfile(filn) or  os.path.getsize(filn) == 0:
+			src = download(submission['id'])
+			fp = codecs.open(filn, 'w', 'utf-8-sig')
 			fp.write('// '+submission['problem']+'\n')
 			fp.write('// http://codeforces.com/problemset/problem/'+submission['contestId']+'/'+submission['problemId']+'\n')
-			fp.write(download(submission['id']))
+			fp.write(src)
 			fp.close()
 		
 if __name__ == "__main__":
