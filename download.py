@@ -51,7 +51,7 @@ def getSubmissions(user):
 
 def main(user):
 	for submission in getSubmissions(user):
-		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+submission['id']+'.cs'
+		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+submission['id']+'.py'
 		if not os.path.isfile(filn) or  os.path.getsize(filn) == 0:
 			src = download(user, submission['id'])
 			fp = codecs.open(filn, 'w', 'utf-8-sig')
