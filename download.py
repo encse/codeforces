@@ -46,17 +46,20 @@ def getSubmissions(user):
 		'id':str(x['id']), 
 		'problem':x['problem']['name'], 
 		'contestId':str(x['problem']['contestId']),
-		'problemId':str(x['problem']['index']) 
+		'problemId':str(x['problem']['index']),
+		'programmingLanguage':str(x['programmingLanguage'])
 		} for x in s if x['verdict'] == "OK" ]
 
 def main(user):
 	for submission in getSubmissions(user):
-		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+submission['id']+'.py'
+		filExt = {'Python 2': '.py', 'MS C#':'.cs'}[submission['programmingLanguage']]
+		comment= {'Python 2': '# ', 'MS C#':'// '}[submission['programmingLanguage']]
+		filn = 'p'+submission['contestId'] + submission['problemId']+'-'+submission['id']+filExt
 		if not os.path.isfile(filn) or  os.path.getsize(filn) == 0:
 			src = download(user, submission['id'])
 			fp = codecs.open(filn, 'w', 'utf-8-sig')
-			fp.write('// '+submission['problem']+'\n')
-			fp.write('// http://codeforces.com/problemset/problem/'+submission['contestId']+'/'+submission['problemId']+'\n')
+			fp.write(comment+submission['problem']+'\n')
+			fp.write(comment+'http://codeforces.com/problemset/problem/'+submission['contestId']+'/'+submission['problemId']+'\n')
 			fp.write(src)
 			fp.close()
 		

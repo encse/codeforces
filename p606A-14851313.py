@@ -1,5 +1,5 @@
-﻿// Magic Spheres
-// http://codeforces.com/problemset/problem/606/A
+﻿# Magic Spheres
+# http://codeforces.com/problemset/problem/606/A
 import sys
 src = map(int, sys.stdin.readline().split())
 dst = map(int, sys.stdin.readline().split())
